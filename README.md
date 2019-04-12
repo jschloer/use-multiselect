@@ -65,11 +65,11 @@ Marks all keys as not selected.
 
 Returns true or false based on whether the given item iscurrently selected
 
-###function getAllSelectedKeys(keys: Array<string>) => Array<string>
+### function getAllSelectedKeys(keys: Array<string>) => Array<string>
 
 Filters the given array of keys, returning just the selected ones.
 
-###function getSelectionState() => {allSelected: boolean, exceptions: Array<string>}
+### function getSelectionState() => {allSelected: boolean, exceptions: Array<string>}
 
 Returns the internal selection state used by useMultiSelect. This can be used, for instance, to support multiSelect with lazy loaded items. The returned object has enough information to send elsewhere for processing of commands.
 
