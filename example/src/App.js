@@ -8,10 +8,12 @@ const App = () => {
     isSelected,
     setSelected,
     selectAll,
-    deSelectAll
+    deSelectAll,
+    getSelectionState
   } = useMultiSelect();
   // setup a small array of checkboxes
   let allSelectedKeys = getAllSelectedKeys(names);
+  let state = getSelectionState();
 
   return (
     <div style={{ display: "flex" }}>
@@ -55,6 +57,7 @@ const App = () => {
           return <div key={key}>{key}</div>;
         })}
       </div>
+      <div>{JSON.stringify(state)}</div>
     </div>
   );
 };
