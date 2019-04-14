@@ -1,6 +1,9 @@
 import * as React from "react";
 
-export const useMultiSelect = () => {
+export const useMultiSelect = (initialState?: {
+  allSelected: boolean;
+  exceptions: Array<string>;
+}) => {
   // we want to keep track of whether or not the current state is inclusive of everything or nothing
   //    and then a list of exceptions to the rule.
   // i.e. all items are selected, except for these five keys, or nothing is selected except these three keys
@@ -10,10 +13,12 @@ export const useMultiSelect = () => {
   let [{ allSelected, exceptions }, setSelectionState] = React.useState<{
     allSelected: boolean;
     exceptions: Array<string>;
-  }>({
-    allSelected: false,
-    exceptions: []
-  });
+  }>(
+    initialState || {
+      allSelected: false,
+      exceptions: []
+    }
+  );
   // now we want to return a set of functions for the consumer.
   // We need a
   //    function to set the value of a key

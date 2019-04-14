@@ -10,7 +10,7 @@ const App = () => {
     selectAll,
     deSelectAll,
     getSelectionState
-  } = useMultiSelect();
+  } = useMultiSelect({ allSelected: true, exceptions: ["Jayson"] });
   // setup a small array of checkboxes
   let allSelectedKeys = getAllSelectedKeys(names);
   let state = getSelectionState();
