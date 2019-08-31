@@ -1,0 +1,17 @@
+version: 1
+update_configs:
+  - package_manager: "javascript"
+    directory: "/"
+    update_schedule: "live"
+    default_assignees:
+      - "jschloer"
+    default_labels:
+      - dependencies
+  - package_manager: "javascript"
+    directory: "/example"
+    update_schedule: "live"
+    default_assignees:
+      - "jschloer"
+    default_labels:
+      - dependencies
+      - example
