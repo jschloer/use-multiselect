@@ -32,7 +32,7 @@ const Example = () => {
                 type="checkbox"
                 item={item}
                 checked={isSelected(item)}
-                onChange={ev => toggleSelected(item, ev.target.checked)}
+                onChange={ev => setSelected(item, ev.target.checked)}
               />
             </label>
           </div>
