@@ -7,6 +7,7 @@ const App = () => {
     getAllSelectedKeys,
     isSelected,
     setSelected,
+    toggleSelected,
     selectAll,
     deSelectAll,
     getSelectionState
@@ -14,7 +15,6 @@ const App = () => {
   // setup a small array of checkboxes
   let allSelectedKeys = getAllSelectedKeys(names);
   let state = getSelectionState();
-
   return (
     <div style={{ display: "flex" }}>
       <div>
@@ -34,6 +34,22 @@ const App = () => {
             }}
           >
             Select none
+          </button>
+          <button
+            onClick={ev => {
+              ev.preventDefault();
+              names.slice(0, 3).forEach(name => setSelected(name, true));
+            }}
+          >
+            Select Top 3
+          </button>
+          <button
+            onClick={ev => {
+              ev.preventDefault();
+              names.slice(0, 3).forEach(name => toggleSelected(name, true));
+            }}
+          >
+            Toggle Top 3
           </button>
           {names.map(name => {
             return (
