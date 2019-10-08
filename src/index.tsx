@@ -23,43 +23,43 @@ export const useMultiSelect = (initialState?: {
   // We need a
   //    function to set the value of a key
   function setSelected(key: string, value: boolean) {
-    // logic is variable based on whether we're in allSelected or not.
-    let keyIndex = exceptions.indexOf(key);
-    // if allSelected and value is false, make sure it's in the exceptions
-    // if !allSelected and value is true, make sure it's in the exceptions
-    if ((allSelected && !value) || (!allSelected && value)) {
-      if (keyIndex < 0) {
-        setSelectionState({ allSelected, exceptions: [...exceptions, key] });
+    // because we're updating state based on existing state, we need to use the function style updates
+    setSelectionState(state => {
+      // If the value we're setting too matches our default state, then just make sure
+      //    that the key is not in our exceptions list
+      if (state.allSelected === value) {
+        return {
+          allSelected: state.allSelected,
+          exceptions: state.exceptions.filter(item => item !== key)
+        };
+      } else {
+        // If the item should be in the exceptions list, then add it if it's missing
+        if (!state.exceptions.includes(key)) {
+          return {
+            allSelected: state.allSelected,
+            exceptions: [...state.exceptions, key]
+          };
+        }
       }
-    } else {
-      // if allSelected and value is true, make sure it's not in exceptions
-      // if !allSelected and value is false, make sure it's not in exceptions
-      if (keyIndex >= 0) {
-        setSelectionState({
-          allSelected,
-          exceptions: [
-            ...exceptions.slice(0, keyIndex),
-            ...exceptions.slice(keyIndex + 1)
-          ]
-        });
-      }
-    }
+      return state;
+    });
   }
   //    function to toggle the value of a key
   function toggleSelected(key: string) {
     // basically just check to see if is in the exceptions array, and invert that
-    let keyIndex = exceptions.indexOf(key);
-    if (keyIndex >= 0) {
-      setSelectionState({
-        allSelected,
-        exceptions: [
-          ...exceptions.slice(0, keyIndex),
-          ...exceptions.slice(keyIndex + 1)
-        ]
-      });
-    } else {
-      setSelectionState({ allSelected, exceptions: [...exceptions, key] });
-    }
+    setSelectionState(state => {
+      if (state.exceptions.includes(key)) {
+        return {
+          allSelected: state.allSelected,
+          exceptions: state.exceptions.filter(item => item !== key)
+        };
+      } else {
+        return {
+          allSelected: state.allSelected,
+          exceptions: [...state.exceptions, key]
+        };
+      }
+    });
   }
   //    function for select all
   function selectAll() {
