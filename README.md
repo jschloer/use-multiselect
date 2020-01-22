@@ -12,7 +12,9 @@ npm install --save use-multiselect
 
 ## Usage
 
-useMultiSelect manages the set of items that are currently selected. We try to be a little clever by only keeping track of the items that are different from the default selection state. The way this works is we keep track of whether the default state of items is selected or not selected, and then keep a list of the exceptions to the default state. This means it can be used to manage a large list of objects that aren't necessarily fully known. You could then, for instance, use select all on a lazy loaded list where not all items have been downloaded. Basic usage is shown below:
+useMultiSelect manages the set of items that are currently selected. We try to be a little clever by only keeping track of the items that are different from the default selection state. The way this works is we keep track of whether the default state of items is selected or not selected, and then keep a list of the exceptions to the default state. This means it can be used to manage a large list of objects that aren't necessarily fully known. You could then, for instance, use 'select all' on a lazy loaded list where not all items have been downloaded. 
+You also can choose to use useMultiselect as a standalone hook, or as a hook attached to a Context provider. Using the context provider allows you to better separate the multi select responsiblity among components. 
+Standalone usage is shown below:
 
 ```tsx
 import * as React from "react";
@@ -43,9 +45,52 @@ const Example = () => {
 };
 ```
 
-## useMultiSelect (allSelected: boolean, exceptions: Array<string>) => {...Returned functions}
+Provider Based 
+```tsx
+import * as React from "react";
 
+import { useMultiSelectWithProvider, MultiSelectWrapper} from "use-multiselect";
+const UpperComponent = () => {
+    <MultiSelectWrapper>
+      <div>
+        Other stuff in here
+        <Example />
+      </div>
+    </MultiSelectWrapper>
+}
+const Example = () => {
+  const { isSelected, setSelected } = useMultiSelectWithProvider();
+  return (
+    <div>
+      {items.map(item => {
+        return (
+          <div>
+            <label key={item}>
+              {item}
+              <input
+                type="checkbox"
+                item={item}
+                checked={isSelected(item)}
+                onChange={ev => setSelected(item, ev.target.checked)}
+              />
+            </label>
+          </div>
+        );
+      })}
+    </div>
+  );
+};
+```
+
+## useMultiSelect (isMultiSelectActive: boolean, allSelected: boolean, exceptions: Array<string>) => {...Returned functions}
 useMultiSelect takes an initial state object defining which items are currently selected. allSelected defines whether the default state is selected or not, and exceptions is a list of keys that are set to the opposite of the default state. This is the same structure as returned by getSelectionState()
+
+## useMultiSelectWithProvider () => {...Returned functions}
+useMultiSelectWithProvider has no parameters as it gets its values from the included Context Provider component. It returns the same functions as the useMultiSelect hook
+
+## MultiSelectContextProvider (isMultiSelectActive: boolean, allSelected: boolean, exceptions: Array<string>)
+This component provides the context used by useMultiSelectWithProvider. It should be placed as close to the consuming hooks as possible. It accepts initial values to be used by the consuming hooks.
+**note that these are just initialization values and they are not monitored. Changing them will not affect the current state of the multiSelect**
 
 ## Returned functions/values
 ### isMultiSelectActive: boolean
