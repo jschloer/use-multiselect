@@ -47,7 +47,12 @@ const Example = () => {
 
 useMultiSelect takes an initial state object defining which items are currently selected. allSelected defines whether the default state is selected or not, and exceptions is a list of keys that are set to the opposite of the default state. This is the same structure as returned by getSelectionState()
 
-## Returned functions
+## Returned functions/values
+### isMultiSelectActive: boolean
+A convenience state to manage whether or not mutliSelect is currently active.
+
+### function setIsMultiSelectActive:(value: boolean) => void
+Sets the current value of isMultiSelectActive. This doesn't affect the selection state at all. i.e. you can turn multiselect on and off, but the selected status of all items will remain the same
 
 ### function setSelected(key: string, value: boolean) => void
 

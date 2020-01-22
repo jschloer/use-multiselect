@@ -1,27 +1,36 @@
-import * as React from "react";
+import { useState } from "react";
 
-export const useMultiSelect = (initialState?: {
+interface InternalState {
+  isMultiSelectActive: boolean;
   allSelected: boolean;
   exceptions: {
     [index: string]: boolean;
   };
-}) => {
+}
+
+export const useMultiSelect = (initialState?: InternalState) => {
+  // Whether or not the multiSelect mode is currently active. This is just here as a convenience.
+  // You can handle this on your own if desired.
   // we want to keep track of whether or not the current state is inclusive of everything or nothing
   //    and then a list of exceptions to the rule.
   // i.e. all items are selected, except for these five keys, or nothing is selected except these three keys
   // so we need to keep track of:
   //    the current state of selection
   //    the list of exceptions
-  let [{ allSelected, exceptions }, setSelectionState] = React.useState<{
-    allSelected: boolean;
-    exceptions: { [index: string]: boolean };
-  }>(
+  let [
+    { allSelected, exceptions, isMultiSelectActive },
+    setSelectionState
+  ] = useState<InternalState>(
     initialState || {
+      isMultiSelectActive: false,
       allSelected: false,
       exceptions: {}
     }
   );
   // now we want to return a set of functions for the consumer.
+  function setMultiSelectActive(val: boolean) {
+    setSelectionState(state => ({ ...state, isMultiSelectActive: val }));
+  }
   // We need a
   //    function to set the value of a key
   function setSelected(key: string, value: boolean) {
@@ -31,6 +40,7 @@ export const useMultiSelect = (initialState?: {
       //    that the key is not in our exceptions list
       if (state.allSelected === value) {
         return {
+          isMultiSelectActive: state.isMultiSelectActive,
           allSelected: state.allSelected,
           exceptions: { ...state.exceptions, [key]: !value }
         };
@@ -38,6 +48,7 @@ export const useMultiSelect = (initialState?: {
         // If the item should be in the exceptions list, then add it if it's missing
         if (!state.exceptions[key]) {
           return {
+            isMultiSelectActive: state.isMultiSelectActive,
             allSelected: state.allSelected,
             exceptions: { ...state.exceptions, [key]: true }
           };
@@ -52,11 +63,13 @@ export const useMultiSelect = (initialState?: {
     setSelectionState(state => {
       if (state.exceptions[key]) {
         return {
+          isMultiSelectActive: state.isMultiSelectActive,
           allSelected: state.allSelected,
           exceptions: { ...state.exceptions, [key]: !state.exceptions[key] }
         };
       } else {
         return {
+          isMultiSelectActive: state.isMultiSelectActive,
           allSelected: state.allSelected,
           exceptions: { ...state.exceptions, [key]: true }
         };
@@ -65,18 +78,26 @@ export const useMultiSelect = (initialState?: {
   }
   //    function for select all
   function selectAll() {
-    setSelectionState({ allSelected: true, exceptions: {} });
+    setSelectionState(state => ({
+      isMultiSelectActive: state.isMultiSelectActive,
+      allSelected: true,
+      exceptions: {}
+    }));
   }
   //    function for deselect all
   function deSelectAll() {
-    setSelectionState({ allSelected: false, exceptions: {} });
+    setSelectionState(state => ({
+      isMultiSelectActive: state.isMultiSelectActive,
+      allSelected: false,
+      exceptions: {}
+    }));
   }
   //    function to determine if a key is currently selected
   function isSelected(key: string) {
     if (allSelected) {
       return !exceptions[key];
     } else {
-      return exceptions[key];
+      return !!exceptions[key];
     }
   }
   //    function to return all of the selected keys, given a list of keys
@@ -97,6 +118,8 @@ export const useMultiSelect = (initialState?: {
     deSelectAll,
     isSelected,
     getAllSelectedKeys,
-    getSelectionState
+    getSelectionState,
+    isMultiSelectActive,
+    setMultiSelectActive
   };
 };

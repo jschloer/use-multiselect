@@ -10,7 +10,9 @@ const App = () => {
     toggleSelected,
     selectAll,
     deSelectAll,
-    getSelectionState
+    getSelectionState,
+    isMultiSelectActive,
+    setMultiSelectActive
   } = useMultiSelect({ allSelected: true, exceptions: ["Jayson"] });
   // setup a small array of checkboxes
   let allSelectedKeys = getAllSelectedKeys(names);
@@ -22,12 +24,22 @@ const App = () => {
           <button
             onClick={ev => {
               ev.preventDefault();
+              setMultiSelectActive(!isMultiSelectActive);
+            }}
+          >
+            Toggle MultiSelect Active
+          </button>
+          <button
+            disabled={!isMultiSelectActive}
+            onClick={ev => {
+              ev.preventDefault();
               selectAll();
             }}
           >
             Select all
           </button>
           <button
+            disabled={!isMultiSelectActive}
             onClick={ev => {
               ev.preventDefault();
               deSelectAll();
@@ -36,6 +48,7 @@ const App = () => {
             Select none
           </button>
           <button
+            disabled={!isMultiSelectActive}
             onClick={ev => {
               ev.preventDefault();
               names.slice(0, 3).forEach(name => setSelected(name, true));
@@ -44,6 +57,7 @@ const App = () => {
             Select Top 3
           </button>
           <button
+            disabled={!isMultiSelectActive}
             onClick={ev => {
               ev.preventDefault();
               names.slice(0, 3).forEach(name => toggleSelected(name, true));
@@ -56,12 +70,15 @@ const App = () => {
               <div key={name}>
                 <label>
                   {name}
-                  <input
-                    type="checkbox"
-                    name={name}
-                    checked={isSelected(name)}
-                    onChange={ev => setSelected(name, ev.target.checked)}
-                  />
+
+                  {isMultiSelectActive && (
+                    <input
+                      type="checkbox"
+                      name={name}
+                      checked={isSelected(name)}
+                      onChange={ev => setSelected(name, ev.target.checked)}
+                    />
+                  )}
                 </label>
               </div>
             );
