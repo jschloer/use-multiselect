@@ -2,9 +2,19 @@ import * as React from "react";
 import { useContext } from "react";
 import { InternalMultiSelectState, useMultiSelect } from "./useMultiSelect";
 
-export type MultiSelectContext = ReturnType<typeof useMultiSelect> | null;
+export type MultiSelectContext = ReturnType<typeof useMultiSelect>;
 
-const MultiSelectContext = React.createContext<MultiSelectContext>(null);
+const MultiSelectContext = React.createContext<MultiSelectContext>({
+  deSelectAll: () => {},
+  selectAll: () => {},
+  getAllSelectedKeys: () => [],
+  getSelectionState: () => ({ allSelected: false, exceptions: {} }),
+  isMultiSelectActive: false,
+  isSelected: (_key: string) => false,
+  setMultiSelectActive: () => {},
+  setSelected: (_key: string, _value: boolean) => {},
+  toggleSelected: (_key: string) => {}
+});
 
 const MultiSelectContextProvider: React.FunctionComponent<{
   initialValue?: InternalMultiSelectState;

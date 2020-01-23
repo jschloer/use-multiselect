@@ -105,7 +105,7 @@ This component provides the context used by useMultiSelectWithProvider. It shoul
 
 A convenience state to manage whether or not mutliSelect is currently active.
 
-### function setIsMultiSelectActive:(value: boolean) => void
+### function setMultiSelectActive:(value: boolean) => void
 
 Sets the current value of isMultiSelectActive. This doesn't affect the selection state at all. i.e. you can turn multiselect on and off, but the selected status of all items will remain the same
 
