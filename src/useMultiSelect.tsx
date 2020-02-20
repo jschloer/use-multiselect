@@ -42,7 +42,7 @@ export const useMultiSelect = (initialState?: InternalMultiSelectState) => {
         return {
           isMultiSelectActive: state.isMultiSelectActive,
           allSelected: state.allSelected,
-          exceptions: { ...state.exceptions, [key]: !value }
+          exceptions: { ...state.exceptions, [key]: false }
         };
       } else {
         // If the item should be in the exceptions list, then add it if it's missing
