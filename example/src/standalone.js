@@ -12,17 +12,19 @@ const Standalone = () => {
     deSelectAll,
     getSelectionState,
     isMultiSelectActive,
-    setMultiSelectActive
-  } = useMultiSelect({ allSelected: true, exceptions: ["Jayson"] });
+    setMultiSelectActive,
+    getSelectedCount,
+  } = useMultiSelect({ allSelected: true, exceptions: { Jayson: true } });
   // setup a small array of checkboxes
   let allSelectedKeys = getAllSelectedKeys(names);
   let state = getSelectionState();
   return (
     <div style={{ display: "flex" }}>
+      Selected Count: {getSelectedCount(names.length)}
       <div>
         <form>
           <button
-            onClick={ev => {
+            onClick={(ev) => {
               ev.preventDefault();
               setMultiSelectActive(!isMultiSelectActive);
             }}
@@ -31,7 +33,7 @@ const Standalone = () => {
           </button>
           <button
             disabled={!isMultiSelectActive}
-            onClick={ev => {
+            onClick={(ev) => {
               ev.preventDefault();
               selectAll();
             }}
@@ -40,7 +42,7 @@ const Standalone = () => {
           </button>
           <button
             disabled={!isMultiSelectActive}
-            onClick={ev => {
+            onClick={(ev) => {
               ev.preventDefault();
               deSelectAll();
             }}
@@ -49,23 +51,23 @@ const Standalone = () => {
           </button>
           <button
             disabled={!isMultiSelectActive}
-            onClick={ev => {
+            onClick={(ev) => {
               ev.preventDefault();
-              names.slice(0, 3).forEach(name => setSelected(name, true));
+              names.slice(0, 3).forEach((name) => setSelected(name, true));
             }}
           >
             Select Top 3
           </button>
           <button
             disabled={!isMultiSelectActive}
-            onClick={ev => {
+            onClick={(ev) => {
               ev.preventDefault();
-              names.slice(0, 3).forEach(name => toggleSelected(name, true));
+              names.slice(0, 3).forEach((name) => toggleSelected(name, true));
             }}
           >
             Toggle Top 3
           </button>
-          {names.map(name => {
+          {names.map((name) => {
             return (
               <div key={name}>
                 <label>
@@ -76,7 +78,7 @@ const Standalone = () => {
                       type="checkbox"
                       name={name}
                       checked={isSelected(name)}
-                      onChange={ev => setSelected(name, ev.target.checked)}
+                      onChange={(ev) => setSelected(name, ev.target.checked)}
                     />
                   )}
                 </label>
@@ -86,7 +88,7 @@ const Standalone = () => {
         </form>
       </div>
       <div>
-        {allSelectedKeys.map(key => {
+        {allSelectedKeys.map((key) => {
           return <div key={key}>{key}</div>;
         })}
       </div>
@@ -124,5 +126,5 @@ let names = [
   "Timmi",
   "Mehetabel",
   "Danie",
-  "Sybyl"
+  "Sybyl",
 ];

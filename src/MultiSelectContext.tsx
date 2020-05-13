@@ -13,12 +13,13 @@ const MultiSelectContext = React.createContext<MultiSelectContext>({
   isSelected: (_key: string) => false,
   setMultiSelectActive: () => {},
   setSelected: (_key: string, _value: boolean) => {},
-  toggleSelected: (_key: string) => {}
+  toggleSelected: (_key: string) => {},
+  getSelectedCount: (_totalItems: number) => 0,
 });
 
 const MultiSelectContextProvider: React.FunctionComponent<{
   initialValue?: InternalMultiSelectState;
-}> = props => {
+}> = (props) => {
   let value = useMultiSelect(props.initialValue);
   return (
     <MultiSelectContext.Provider value={value}>

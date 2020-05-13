@@ -25,7 +25,7 @@ const Example = () => {
   const { isSelected, setSelected } = useMultiSelect();
   return (
     <div>
-      {items.map(item => {
+      {items.map((item) => {
         return (
           <div>
             <label key={item}>
@@ -34,7 +34,7 @@ const Example = () => {
                 type="checkbox"
                 item={item}
                 checked={isSelected(item)}
-                onChange={ev => setSelected(item, ev.target.checked)}
+                onChange={(ev) => setSelected(item, ev.target.checked)}
               />
             </label>
           </div>
@@ -52,7 +52,7 @@ import * as React from "react";
 
 import {
   useMultiSelectWithProvider,
-  MultiSelectContextProvider
+  MultiSelectContextProvider,
 } from "use-multiselect";
 const UpperComponent = () => {
   <MultiSelectContextProvider>
@@ -66,7 +66,7 @@ const Example = () => {
   const { isSelected, setSelected } = useMultiSelectWithProvider();
   return (
     <div>
-      {items.map(item => {
+      {items.map((item) => {
         return (
           <div>
             <label key={item}>
@@ -75,7 +75,7 @@ const Example = () => {
                 type="checkbox"
                 item={item}
                 checked={isSelected(item)}
-                onChange={ev => setSelected(item, ev.target.checked)}
+                onChange={(ev) => setSelected(item, ev.target.checked)}
               />
             </label>
           </div>
@@ -132,6 +132,10 @@ Returns true or false based on whether the given item iscurrently selected
 ### function getAllSelectedKeys(keys: Array<string>) => Array<string>
 
 Filters the given array of keys, returning just the selected ones.
+
+### function getSelectedCount(totalCount: number) => number
+
+Returns the number of items currently selected. It requires the totalCount as a parameter so it can calculate the difference between the total number, and the selected amount, when for instance the select all is pressed and then a single item is deselected.
 
 ### function getSelectionState() => {allSelected: boolean, exceptions: Array<string>}
 
