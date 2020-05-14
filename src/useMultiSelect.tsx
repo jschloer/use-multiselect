@@ -14,7 +14,9 @@ const hashState = (state: Partial<InternalMultiSelectState>) => {
     { algorithm: "sha1", encoding: "base64", unorderedArrays: true }
   );
 };
-export const useMultiSelect = (initialState?: InternalMultiSelectState) => {
+export const useMultiSelect = (
+  initialState?: Partial<InternalMultiSelectState>
+) => {
   // Whether or not the multiSelect mode is currently active. This is just here as a convenience.
   // You can handle this on your own if desired.
   // we want to keep track of whether or not the current state is inclusive of everything or nothing
@@ -29,7 +31,9 @@ export const useMultiSelect = (initialState?: InternalMultiSelectState) => {
   ] = useState<InternalMultiSelectState>(
     initialState
       ? {
-          ...initialState,
+          isMultiSelectActive: initialState.isMultiSelectActive || false,
+          allSelected: initialState.allSelected || false,
+          exceptions: initialState.exceptions || [],
           internalHash: hashState(initialState),
         }
       : {
