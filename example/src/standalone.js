@@ -15,7 +15,7 @@ const Standalone = () => {
     setMultiSelectActive,
     getSelectedCount,
     getStateHash,
-  } = useMultiSelect({ allSelected: true, exceptions: { Jayson: true } });
+  } = useMultiSelect({ allSelected: true, exceptions: ["Jayson"] });
   // setup a small array of checkboxes
   let allSelectedKeys = getAllSelectedKeys(names);
   let state = getSelectionState();

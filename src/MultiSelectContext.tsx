@@ -8,7 +8,7 @@ const MultiSelectContext = React.createContext<MultiSelectContext>({
   deSelectAll: () => {},
   selectAll: () => {},
   getAllSelectedKeys: () => [],
-  getSelectionState: () => ({ allSelected: false, exceptions: {} }),
+  getSelectionState: () => ({ allSelected: false, exceptions: [] }),
   isMultiSelectActive: false,
   isSelected: (_key: string) => false,
   setMultiSelectActive: () => {},

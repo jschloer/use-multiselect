@@ -4,16 +4,14 @@ import hash from "object-hash";
 export interface InternalMultiSelectState {
   isMultiSelectActive: boolean;
   allSelected: boolean;
-  exceptions: {
-    [index: string]: boolean;
-  };
+  exceptions: string[];
   internalHash: string;
 }
 
 const hashState = (state: Partial<InternalMultiSelectState>) => {
   return hash(
     { allSelected: state.allSelected, exceptions: state.exceptions },
-    { algorithm: "sha1", encoding: "base64" }
+    { algorithm: "sha1", encoding: "base64", unorderedArrays: true }
   );
 };
 export const useMultiSelect = (initialState?: InternalMultiSelectState) => {
@@ -37,8 +35,8 @@ export const useMultiSelect = (initialState?: InternalMultiSelectState) => {
       : {
           isMultiSelectActive: false,
           allSelected: false,
-          exceptions: {},
-          internalHash: hashState({ allSelected: false, exceptions: {} }),
+          exceptions: [],
+          internalHash: hashState({ allSelected: false, exceptions: [] }),
         }
   );
   // now we want to return a set of functions for the consumer.
@@ -52,19 +50,14 @@ export const useMultiSelect = (initialState?: InternalMultiSelectState) => {
     setSelectionState((state) => {
       // If the value we're setting to matches our default state, then just make sure
       //    that the key is not in our exceptions list
-      let newState = {
+      const newState = {
         ...state,
+        exceptions:
+          state.allSelected === value
+            ? state.exceptions.filter((f) => f === key)
+            : [...state.exceptions, key],
       };
-      if (state.allSelected === value) {
-        newState.exceptions = { ...state.exceptions, [key]: false };
-      } else {
-        // If the item should be in the exceptions list, then add it if it's missing
-        if (!state.exceptions[key]) {
-          newState.exceptions = { ...state.exceptions, [key]: true };
-        }
-      }
-      newState.internalHash = hashState(newState);
-      return newState;
+      return { ...newState, internalHash: hashState(newState) };
     });
   }
   //    function to toggle the value of a key
@@ -74,7 +67,9 @@ export const useMultiSelect = (initialState?: InternalMultiSelectState) => {
       const newState = {
         isMultiSelectActive: state.isMultiSelectActive,
         allSelected: state.allSelected,
-        exceptions: { ...state.exceptions, [key]: !state.exceptions[key] },
+        exceptions: state.exceptions.includes(key)
+          ? state.exceptions.filter((f) => f !== key)
+          : [...state.exceptions, key],
       };
       return { ...newState, internalHash: hashState(newState) };
     });
@@ -84,8 +79,8 @@ export const useMultiSelect = (initialState?: InternalMultiSelectState) => {
     setSelectionState((state) => ({
       isMultiSelectActive: state.isMultiSelectActive,
       allSelected: true,
-      exceptions: {},
-      internalHash: hashState({ allSelected: true, exceptions: {} }),
+      exceptions: [],
+      internalHash: hashState({ allSelected: true, exceptions: [] }),
     }));
   }
   //    function for deselect all
@@ -93,23 +88,23 @@ export const useMultiSelect = (initialState?: InternalMultiSelectState) => {
     setSelectionState((state) => ({
       isMultiSelectActive: state.isMultiSelectActive,
       allSelected: false,
-      exceptions: {},
-      internalHash: hashState({ allSelected: false, exceptions: {} }),
+      exceptions: [],
+      internalHash: hashState({ allSelected: false, exceptions: [] }),
     }));
   }
   //    function to determine if a key is currently selected
   function isSelected(key: string) {
     if (allSelected) {
-      return !exceptions[key];
+      return !exceptions.includes(key);
     } else {
-      return !!exceptions[key];
+      return exceptions.includes(key);
     }
   }
   //    function to return all of the selected keys, given a list of keys
   function getAllSelectedKeys(keys: Array<string>) {
     let filterFunction = allSelected
-      ? (item: string) => !exceptions[item]
-      : (item: string) => exceptions[item];
+      ? (item: string) => !exceptions.includes(item)
+      : (item: string) => exceptions.includes(item);
     return keys.filter(filterFunction);
   }
   // would also be nice to have a way to return the actual definition for lazy loaders
@@ -118,8 +113,7 @@ export const useMultiSelect = (initialState?: InternalMultiSelectState) => {
   }
   function getSelectedCount(totalItems: number) {
     // In order to calculate how many items might be selected currently, we need to know the total count
-    const exceptionsCount = Object.keys(exceptions).filter((e) => exceptions[e])
-      .length;
+    const exceptionsCount = exceptions.length;
     if (allSelected) {
       return totalItems - exceptionsCount;
     } else {
