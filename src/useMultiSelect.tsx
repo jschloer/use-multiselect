@@ -1,4 +1,5 @@
 import { useState } from "react";
+import hash from "object-hash";
 
 export interface InternalMultiSelectState {
   isMultiSelectActive: boolean;
@@ -6,8 +7,15 @@ export interface InternalMultiSelectState {
   exceptions: {
     [index: string]: boolean;
   };
+  internalHash: string;
 }
 
+const hashState = (state: Partial<InternalMultiSelectState>) => {
+  return hash(
+    { allSelected: state.allSelected, exceptions: state.exceptions },
+    { algorithm: "sha1", encoding: "base64" }
+  );
+};
 export const useMultiSelect = (initialState?: InternalMultiSelectState) => {
   // Whether or not the multiSelect mode is currently active. This is just here as a convenience.
   // You can handle this on your own if desired.
@@ -18,14 +26,20 @@ export const useMultiSelect = (initialState?: InternalMultiSelectState) => {
   //    the current state of selection
   //    the list of exceptions
   let [
-    { allSelected, exceptions, isMultiSelectActive },
+    { allSelected, exceptions, isMultiSelectActive, internalHash },
     setSelectionState,
   ] = useState<InternalMultiSelectState>(
-    initialState || {
-      isMultiSelectActive: false,
-      allSelected: false,
-      exceptions: {},
-    }
+    initialState
+      ? {
+          ...initialState,
+          internalHash: hashState(initialState),
+        }
+      : {
+          isMultiSelectActive: false,
+          allSelected: false,
+          exceptions: {},
+          internalHash: hashState({ allSelected: false, exceptions: {} }),
+        }
   );
   // now we want to return a set of functions for the consumer.
   function setMultiSelectActive(val: boolean) {
@@ -36,44 +50,33 @@ export const useMultiSelect = (initialState?: InternalMultiSelectState) => {
   function setSelected(key: string, value: boolean) {
     // because we're updating state based on existing state, we need to use the function style updates
     setSelectionState((state) => {
-      // If the value we're setting too matches our default state, then just make sure
+      // If the value we're setting to matches our default state, then just make sure
       //    that the key is not in our exceptions list
+      let newState = {
+        ...state,
+      };
       if (state.allSelected === value) {
-        return {
-          isMultiSelectActive: state.isMultiSelectActive,
-          allSelected: state.allSelected,
-          exceptions: { ...state.exceptions, [key]: false },
-        };
+        newState.exceptions = { ...state.exceptions, [key]: false };
       } else {
         // If the item should be in the exceptions list, then add it if it's missing
         if (!state.exceptions[key]) {
-          return {
-            isMultiSelectActive: state.isMultiSelectActive,
-            allSelected: state.allSelected,
-            exceptions: { ...state.exceptions, [key]: true },
-          };
+          newState.exceptions = { ...state.exceptions, [key]: true };
         }
       }
-      return state;
+      newState.internalHash = hashState(newState);
+      return newState;
     });
   }
   //    function to toggle the value of a key
   function toggleSelected(key: string) {
     // basically just check to see if is in the exceptions array, and invert that
     setSelectionState((state) => {
-      if (state.exceptions[key]) {
-        return {
-          isMultiSelectActive: state.isMultiSelectActive,
-          allSelected: state.allSelected,
-          exceptions: { ...state.exceptions, [key]: !state.exceptions[key] },
-        };
-      } else {
-        return {
-          isMultiSelectActive: state.isMultiSelectActive,
-          allSelected: state.allSelected,
-          exceptions: { ...state.exceptions, [key]: true },
-        };
-      }
+      const newState = {
+        isMultiSelectActive: state.isMultiSelectActive,
+        allSelected: state.allSelected,
+        exceptions: { ...state.exceptions, [key]: !state.exceptions[key] },
+      };
+      return { ...newState, internalHash: hashState(newState) };
     });
   }
   //    function for select all
@@ -82,6 +85,7 @@ export const useMultiSelect = (initialState?: InternalMultiSelectState) => {
       isMultiSelectActive: state.isMultiSelectActive,
       allSelected: true,
       exceptions: {},
+      internalHash: hashState({ allSelected: true, exceptions: {} }),
     }));
   }
   //    function for deselect all
@@ -90,6 +94,7 @@ export const useMultiSelect = (initialState?: InternalMultiSelectState) => {
       isMultiSelectActive: state.isMultiSelectActive,
       allSelected: false,
       exceptions: {},
+      internalHash: hashState({ allSelected: false, exceptions: {} }),
     }));
   }
   //    function to determine if a key is currently selected
@@ -121,6 +126,9 @@ export const useMultiSelect = (initialState?: InternalMultiSelectState) => {
       return exceptionsCount;
     }
   }
+  function getStateHash() {
+    return internalHash;
+  }
   return {
     setSelected,
     toggleSelected,
@@ -132,5 +140,6 @@ export const useMultiSelect = (initialState?: InternalMultiSelectState) => {
     isMultiSelectActive,
     setMultiSelectActive,
     getSelectedCount,
+    getStateHash,
   };
 };
