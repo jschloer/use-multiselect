@@ -141,9 +141,9 @@ Returns the number of items currently selected. It requires the totalCount as a 
 
 Returns the internal selection state used by useMultiSelect. This can be used, for instance, to support multiSelect with lazy loaded items. The returned object has enough information to recreate teh selection set elsewhere for processing of commands.
 
-### function getStateHash() => string
+### stateHash: string
 
-This returns a hash value defined by the internal state of the selection set(note, that this does not include the isMultiSelectActive field). This hash value can be used as a quick way to determine if the state of selection has changed. This can be particularly valuable for hook dependencies.
+This is a hash value defined by the internal state of the selection set(note, that this does not include the isMultiSelectActive field). This hash value can be used as a quick way to determine if the state of selection has changed. This can be particularly valuable for hook dependencies.
 
 ## License
 

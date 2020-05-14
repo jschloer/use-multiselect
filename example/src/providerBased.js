@@ -26,7 +26,7 @@ const ProviderConsumer = () => {
     isMultiSelectActive,
     setMultiSelectActive,
     getSelectedCount,
-    getStateHash,
+    stateHash,
   } = useMultiSelectWithProvider();
   // setup a small array of checkboxes
   let allSelectedKeys = getAllSelectedKeys(names);
@@ -35,7 +35,7 @@ const ProviderConsumer = () => {
     <div style={{ display: "flex" }}>
       Selected Count: {getSelectedCount(names.length)}
       <br />
-      Hash: {getStateHash()}
+      Hash: {stateHash}
       <div>
         <form>
           <button

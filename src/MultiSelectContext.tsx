@@ -15,7 +15,7 @@ const MultiSelectContext = React.createContext<MultiSelectContext>({
   setSelected: (_key: string, _value: boolean) => {},
   toggleSelected: (_key: string) => {},
   getSelectedCount: (_totalItems: number) => 0,
-  getStateHash: () => "",
+  stateHash: "",
 });
 
 const MultiSelectContextProvider: React.FunctionComponent<{

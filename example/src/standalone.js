@@ -14,7 +14,7 @@ const Standalone = () => {
     isMultiSelectActive,
     setMultiSelectActive,
     getSelectedCount,
-    getStateHash,
+    stateHash,
   } = useMultiSelect({ allSelected: true, exceptions: ["Jayson"] });
   // setup a small array of checkboxes
   let allSelectedKeys = getAllSelectedKeys(names);
@@ -23,7 +23,7 @@ const Standalone = () => {
     <div style={{ display: "flex" }}>
       Selected Count: {getSelectedCount(names.length)}
       <br />
-      Hash: {getStateHash()}
+      Hash: {stateHash}
       <div>
         <form>
           <button

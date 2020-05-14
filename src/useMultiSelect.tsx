@@ -124,9 +124,6 @@ export const useMultiSelect = (
       return exceptionsCount;
     }
   }
-  function getStateHash() {
-    return internalHash;
-  }
   return {
     setSelected,
     toggleSelected,
@@ -138,6 +135,6 @@ export const useMultiSelect = (
     isMultiSelectActive,
     setMultiSelectActive,
     getSelectedCount,
-    getStateHash,
+    stateHash: internalHash,
   };
 };
