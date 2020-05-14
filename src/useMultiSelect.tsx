@@ -54,12 +54,13 @@ export const useMultiSelect = (
     setSelectionState((state) => {
       // If the value we're setting to matches our default state, then just make sure
       //    that the key is not in our exceptions list
+      const cleanExceptions = [...state.exceptions.filter((f) => f !== key)];
       const newState = {
         ...state,
         exceptions:
           state.allSelected === value
-            ? state.exceptions.filter((f) => f === key)
-            : [...state.exceptions, key],
+            ? cleanExceptions
+            : [...cleanExceptions, key],
       };
       return { ...newState, internalHash: hashState(newState) };
     });
