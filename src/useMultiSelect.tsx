@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import hash from "object-hash";
 
 export interface InternalMultiSelectState {
@@ -44,12 +44,12 @@ export const useMultiSelect = (
         }
   );
   // now we want to return a set of functions for the consumer.
-  function setMultiSelectActive(val: boolean) {
+  const setMultiSelectActive = useCallback((val: boolean) => {
     setSelectionState((state) => ({ ...state, isMultiSelectActive: val }));
-  }
+  }, []);
   // We need a
   //    function to set the value of a key
-  function setSelected(key: string, value: boolean) {
+  const setSelected = useCallback((key: string, value: boolean) => {
     // because we're updating state based on existing state, we need to use the function style updates
     setSelectionState((state) => {
       // If the value we're setting to matches our default state, then just make sure
@@ -64,9 +64,9 @@ export const useMultiSelect = (
       };
       return { ...newState, internalHash: hashState(newState) };
     });
-  }
+  }, []);
   //    function to toggle the value of a key
-  function toggleSelected(key: string) {
+  const toggleSelected = useCallback((key: string) => {
     // basically just check to see if is in the exceptions array, and invert that
     setSelectionState((state) => {
       const newState = {
@@ -78,45 +78,45 @@ export const useMultiSelect = (
       };
       return { ...newState, internalHash: hashState(newState) };
     });
-  }
+  }, []);
   //    function for select all
-  function selectAll() {
+  const selectAll = useCallback(() => {
     setSelectionState((state) => ({
       isMultiSelectActive: state.isMultiSelectActive,
       allSelected: true,
       exceptions: [],
       internalHash: hashState({ allSelected: true, exceptions: [] }),
     }));
-  }
+  }, []);
   //    function for deselect all
-  function deSelectAll() {
+  const deSelectAll = useCallback(() => {
     setSelectionState((state) => ({
       isMultiSelectActive: state.isMultiSelectActive,
       allSelected: false,
       exceptions: [],
       internalHash: hashState({ allSelected: false, exceptions: [] }),
     }));
-  }
+  }, []);
   //    function to determine if a key is currently selected
-  function isSelected(key: string) {
+  const isSelected = useCallback((key: string) => {
     if (allSelected) {
       return !exceptions.includes(key);
     } else {
       return exceptions.includes(key);
     }
-  }
+  }, []);
   //    function to return all of the selected keys, given a list of keys
-  function getAllSelectedKeys(keys: Array<string>) {
+  const getAllSelectedKeys = useCallback((keys: Array<string>) => {
     let filterFunction = allSelected
       ? (item: string) => !exceptions.includes(item)
       : (item: string) => exceptions.includes(item);
     return keys.filter(filterFunction);
-  }
+  }, []);
   // would also be nice to have a way to return the actual definition for lazy loaders
-  function getSelectionState() {
+  const getSelectionState = useCallback(() => {
     return { allSelected, exceptions };
-  }
-  function getSelectedCount(totalItems: number) {
+  }, []);
+  const getSelectedCount = useCallback((totalItems: number) => {
     // In order to calculate how many items might be selected currently, we need to know the total count
     const exceptionsCount = exceptions.length;
     if (allSelected) {
@@ -124,7 +124,7 @@ export const useMultiSelect = (
     } else {
       return exceptionsCount;
     }
-  }
+  }, []);
   return {
     setSelected,
     toggleSelected,
